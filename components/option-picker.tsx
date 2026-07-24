@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
+import { useState } from "react"
+import { Button } from "./ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Input } from "./ui/input";
-import { FieldLabel } from "./ui/field";
-import { cn } from "@/lib/utils";
+} from "./ui/dropdown-menu"
+import { Input } from "./ui/input"
+import { FieldLabel } from "./ui/field"
+import { cn } from "@/lib/utils"
 
 export default function OptionPicker({
   label,
@@ -20,18 +20,18 @@ export default function OptionPicker({
   className,
   onSelect,
 }: {
-  options?: OptionType[];
-  placeHolder?: string;
-  selected?: string;
-  fieldName?: string;
-  label?: string;
-  className?: string;
-  onSelect?: () => void;
+  options?: OptionType[]
+  placeHolder?: string
+  selected?: string
+  fieldName?: string
+  label?: string
+  className?: string
+  onSelect?: () => void
 }) {
-  const defaultOption = options?.find((op) => op.key === selected);
-  const [item, setItem] = useState<OptionType | undefined>(defaultOption);
+  const defaultOption = options?.find((op) => op.key === selected)
+  const [item, setItem] = useState<OptionType | undefined>(defaultOption)
 
-  const inputId = `option-${fieldName}`;
+  const inputId = `option-${fieldName}`
 
   return (
     <div className={cn("w-full", className)}>
@@ -56,24 +56,24 @@ export default function OptionPicker({
                 <DropdownMenuItem
                   key={key}
                   onClick={() => {
-                    setItem({ key, name });
+                    setItem({ key, name })
                     if (onSelect) {
-                      onSelect();
+                      onSelect()
                     }
                   }}
                 >
                   {name}
                 </DropdownMenuItem>
-              );
+              )
             })}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }
 
 export interface OptionType {
-  key: string;
-  name: string;
+  key: string
+  name: string
 }
