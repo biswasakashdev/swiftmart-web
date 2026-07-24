@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge"
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
-      <div className="container flex flex-col items-center px-4 text-center">
+    <section className="relative flex justify-center overflow-hidden py-20 md:py-32">
+      <div className="container flex flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

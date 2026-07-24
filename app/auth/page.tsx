@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from "react"
 import { AnimatePresence, Variants } from "framer-motion"
-import { Navbar } from "@/components/home/navbar"
+import { Navbar } from "@/components/landing-page/navbar"
 import { SignInForm } from "@/components/auth/singin-form"
 import { SignUpForm } from "@/components/auth/signup-form"
 import { SocialAuth } from "@/components/auth/social-auth"
@@ -19,11 +19,18 @@ const formTransition: Variants = {
   exit: { opacity: 0, x: 10, transition: { duration: 0.15 } },
 }
 
-export const AuthPage: React.FC = () => {
-  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin")
+export type AuthMode = "signin" | "signup"
 
-  const toggleAuthMode = () => {
-    setAuthMode((prev) => (prev === "signin" ? "signup" : "signin"))
+export const AuthPage: React.FC = () => {
+  const [authMode, setAuthMode] = useState<AuthMode>("signin")
+  const [formErr, setFormError] = useState<string | undefined>(undefined)
+
+  const updateFormError = (formError: string | undefined) => {
+    setFormError(formErr)
+  }
+
+  const updateAuthMode = (authMode: AuthMode) => {
+    setAuthMode(authMode)
   }
 
   return (
@@ -41,25 +48,43 @@ export const AuthPage: React.FC = () => {
                 : "Create merchant seat"}
             </CardTitle>
             <CardDescription className="text-xs">
-              {authMode === "signin"
-                ? "New to the ecosystem?"
-                : "Already mapped your handles?"}{" "}
-              <button
-                type="button"
-                onClick={toggleAuthMode}
-                className="cursor-pointer font-medium text-foreground underline underline-offset-4 focus:outline-none"
-              >
-                {authMode === "signin" ? "Join" : "Sign in"}
-              </button>
+              {formErr ? (
+                <span>{formErr}</span>
+              ) : (
+                <span>
+                  {authMode === "signin"
+                    ? "New to the ecosystem?"
+                    : "Already mapped your handles?"}{" "}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAuthMode((prev) =>
+                        prev === "signin" ? "signup" : "signin"
+                      )
+                    }
+                    className="cursor-pointer font-medium text-foreground underline underline-offset-4 focus:outline-none"
+                  >
+                    {authMode === "signin" ? "Join" : "Sign in"}
+                  </button>
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
             <AnimatePresence mode="wait">
               {authMode === "signin" ? (
-                <SignInForm variants={formTransition} />
+                <SignInForm
+                  variants={formTransition}
+                  updateAuthMode={updateAuthMode}
+                  updateFormError={updateFormError}
+                />
               ) : (
-                <SignUpForm variants={formTransition} />
+                <SignUpForm
+                  variants={formTransition}
+                  updateAuthMode={updateAuthMode}
+                  updateFormError={updateFormError}
+                />
               )}
             </AnimatePresence>
 

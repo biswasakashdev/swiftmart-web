@@ -8,37 +8,33 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
-import { FieldLabel } from "./ui/field"
 import { cn } from "@/lib/utils"
 
 export default function OptionPicker({
-  label,
   options,
   placeHolder,
   selected,
   fieldName,
   className,
   onSelect,
+  id,
 }: {
   options?: OptionType[]
   placeHolder?: string
   selected?: string
   fieldName?: string
-  label?: string
+  id?: string
   className?: string
   onSelect?: () => void
 }) {
   const defaultOption = options?.find((op) => op.key === selected)
   const [item, setItem] = useState<OptionType | undefined>(defaultOption)
 
-  const inputId = `option-${fieldName}`
-
   return (
     <div className={cn("w-full", className)}>
-      <FieldLabel htmlFor={inputId}>{label}</FieldLabel>
       <DropdownMenu>
         <Input
-          id={inputId}
+          id={id}
           defaultValue={item?.key}
           className="hidden"
           name={fieldName}

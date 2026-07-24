@@ -1,8 +1,8 @@
 import React from "react"
-import { Navbar } from "@/components/home/navbar"
-import { HeroSection } from "@/components/home/hero-section"
-import { PromptDemo } from "@/components/home/prompt-demo"
-import { FeaturesSection } from "@/components/home/features-section"
+import { Navbar } from "@/components/landing-page/navbar"
+import { HeroSection } from "@/components/landing-page/hero-section"
+import { PromptDemo } from "@/components/landing-page/prompt-demo"
+import { FeaturesSection } from "@/components/landing-page/features-section"
 import { SwiftmartLogo } from "@/components/swiftmart-logo"
 
 export default function HomePage() {

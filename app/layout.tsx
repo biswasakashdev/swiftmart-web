@@ -3,6 +3,10 @@ import { Geist_Mono, Inter } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "next-themes"
+import { AuthContextProvider } from "@/context/auth.context"
+import { fetchAuthorization } from "./action"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -11,11 +15,21 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const authorization = await fetchAuthorization()
+  const headersList = await headers()
+
+  const requestPath = headersList.get("x-pathname")
+
+  // If user logged in then redirect to dashboard.
+
+  if (authorization && requestPath && !requestPath.startsWith("/home")) {
+    redirect("/home")
+  }
   return (
     <html
       lang="en"
@@ -28,7 +42,16 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthContextProvider authorization={authorization}>
+            {children}
+          </AuthContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

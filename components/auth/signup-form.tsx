@@ -1,20 +1,37 @@
 import PasswordInputWithToggle from "@/components/password-toggle-input"
 import { Button } from "@/components/ui/button"
-import { Field, FieldGroup, FieldSet } from "@/components/ui/field"
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { countryCallingCodes } from "@/constants/number-codes"
 import { motion, Variants } from "framer-motion"
 import { Mail, Sparkles, User } from "lucide-react"
-import React, { useActionState, useState } from "react"
+import React, { useActionState, useEffect, useState } from "react"
 import OptionPicker from "../option-picker"
 import { UserSchema } from "@/schemas/user.schema"
+import { AuthMode } from "@/app/auth/page"
+import axios from "axios"
+import { BASE_URL } from "@/context/user.context"
+import { CardDescription } from "../ui/card"
 
-export const SignUpForm = ({ variants }: { variants: Variants }) => {
-  const [errors, setErrors] = useState({})
+export const SignUpForm = ({
+  variants,
+  updateAuthMode,
+  updateFormError,
+}: {
+  variants: Variants
+  updateAuthMode: (authMode: AuthMode) => void
 
+  updateFormError: (formError: string | undefined) => void
+}) => {
   const [formState, action, isLoading] = useActionState<SignUpForm, FormData>(
-    async (formState: SignUpForm, formData: FormData) => {
+    async (_state: SignUpForm, formData: FormData) => {
       // Handle registration logic here
 
       const userData = {
@@ -36,11 +53,11 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
         }
 
         return {
-          prevState: {
+          state: {
             ...userData,
           },
           errors: formError,
-        }
+        } as SignUpForm
       }
 
       const userDetails = result.data
@@ -50,9 +67,9 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
         {
           email: userDetails.email,
           password: userDetails.password,
-          gender: userDetails.gender,
-          firstName: userDetails.firstName,
-          lastName: userDetails.lastName,
+          name: userDetails.name,
+          phone: userDetails.phone,
+          countryCode: userDetails.countryCode,
         },
         {
           validateStatus: () => true,
@@ -62,22 +79,22 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
       const { status, data } = res
 
       if (status === 201) {
-        router.replace("/auth")
-        return { prevState: {}, errors: {} }
+        updateAuthMode("signin")
+        return { state: {}, errors: {} } as SignUpForm
       }
 
       const serverError: SignUpFormError = {
-        error: data.error ? data.error : "Something went wrong.",
+        err: data.error || "Something went wrong.",
       }
 
       return {
-        prevState: {
+        state: {
           ...userData,
         },
         errors: serverError,
-      }
+      } as SignUpForm
     },
-    { prevState: {}, errors: {} }
+    { state: {}, errors: {} }
   )
 
   const [errors, setErrors] = useState<SignUpFormError>(formState.errors)
@@ -91,6 +108,10 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
     setPrevStateError(formState.errors)
   }
 
+  useEffect(() => {
+    updateFormError(errors.err)
+  }, [errors.err, updateFormError])
+
   return (
     <motion.form
       key="signup"
@@ -98,13 +119,14 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
       variants={variants}
       animate="visible"
       exit="exit"
-      onSubmit={handleSubmit}
+      action={action}
       className="space-y-3.5"
     >
+      {errors.err && <CardDescription>{errors.err}</CardDescription>}
       <FieldSet>
         {/* Name Inputs */}
         <Field className="space-y-1.5">
-          <Label htmlFor="first-name">Full Name</Label>
+          <FieldLabel htmlFor="first-name">Full Name</FieldLabel>
           <div className="relative">
             <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -116,20 +138,26 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
               className="pl-9"
             />
           </div>
+          {errors.name && <FieldError>{errors.name}</FieldError>}
         </Field>
 
         <FieldGroup className="flex flex-row gap-2">
           <Field className="w-1/3">
+            <FieldLabel htmlFor="country-code">Country Code</FieldLabel>
             <OptionPicker
               fieldName="countryCode"
-              label="Country Code"
+              id="country-code"
               className="space-y-1.5"
               options={countryCallingCodes}
             />
+
+            {errors.countryCode && (
+              <FieldError>{errors.countryCode}</FieldError>
+            )}
           </Field>
 
           <Field className="w-2/3">
-            <Label htmlFor="phone">Phone</Label>
+            <FieldLabel htmlFor="phone">Phone</FieldLabel>
             <Input
               id="phone"
               name="phone"
@@ -138,10 +166,12 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
               required
             />
           </Field>
+
+          {errors.phone && <FieldError>{errors.phone}</FieldError>}
         </FieldGroup>
 
         {/* Email Input */}
-        <div className="space-y-1.5">
+        <Field className="space-y-1.5">
           <Label htmlFor="signup-email">Email address</Label>
           <div className="relative">
             <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -154,10 +184,12 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
               className="pl-9"
             />
           </div>
-        </div>
+
+          {errors.email && <FieldError>{errors.email}</FieldError>}
+        </Field>
 
         {/* Password Inputs with Custom PasswordWithToggle */}
-        <div className="space-y-1.5">
+        <Field className="space-y-1.5">
           <Label htmlFor="signup-password">Password</Label>
           <PasswordInputWithToggle
             id="signup-password"
@@ -165,9 +197,11 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
             name="password"
             placeholder="Min. 8 parameters"
           />
-        </div>
 
-        <div className="space-y-1.5">
+          {errors.password && <FieldError>{errors.password}</FieldError>}
+        </Field>
+
+        <Field className="space-y-1.5">
           <Label htmlFor="signup-confirm-password">Confirm password</Label>
           <Input
             type="password"
@@ -176,12 +210,18 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
             name="confirmPassword"
             placeholder="Repeat password"
           />
-        </div>
+
+          {errors.confirmPassword && (
+            <FieldError>{errors.confirmPassword}</FieldError>
+          )}
+        </Field>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full gap-1.5">
+        <Button disabled={isLoading} type="submit" className="w-full gap-1.5">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Generate Platform Account</span>
+          <span>
+            {isLoading ? <span>Signing up ...</span> : <span>Sign Up</span>}
+          </span>
         </Button>
       </FieldSet>
     </motion.form>
@@ -190,24 +230,24 @@ export const SignUpForm = ({ variants }: { variants: Variants }) => {
 
 export interface SignUpForm {
   errors: SignUpFormError
-  prevState: SignUpFormFields
+  state: SignUpFormFields
 }
 
 export interface SignUpFormFields {
   email?: string
-  firstName?: string
-  lastName?: string
-  gender?: string
+  name?: string
   password?: string
   confirmPassword?: string
+  phone?: string
+  countryCode?: string
 }
 
 export interface SignUpFormError {
-  error?: string
+  err?: string
   email?: string
   password?: string
   confirmPassword?: string
-  gender?: string
-  firstName?: string
-  lastName?: string
+  name?: string
+  phone?: string
+  countryCode?: string
 }
