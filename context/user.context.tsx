@@ -15,9 +15,9 @@ const UserContext = createContext<{
   authorization: {
     token: "",
     user: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
+      avatar: "",
     },
   },
   axios: axios,

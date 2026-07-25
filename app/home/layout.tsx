@@ -1,3 +1,9 @@
-export default async function HomeLayout() {
-  return <div>Hello from home layout</div>
+import { UserContextProvider } from "@/context/user.context"
+
+export default function HomeLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return <UserContextProvider>{children}</UserContextProvider>
 }

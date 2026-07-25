@@ -6,10 +6,9 @@ import axios from "axios"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { SignInForm, SignInFormError } from "@/components/auth/singin-form"
-import { email } from "zod"
 
 export async function signin(
-  prevState: SignInForm,
+  _prevState: SignInForm,
   formData: FormData
 ): Promise<SignInForm> {
   const formFields = {

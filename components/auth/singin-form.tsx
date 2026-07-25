@@ -11,7 +11,6 @@ import { Field, FieldError } from "@/components/ui/field"
 
 export const SignInForm = ({
   variants,
-  updateAuthMode,
   updateFormError,
 }: {
   variants: Variants

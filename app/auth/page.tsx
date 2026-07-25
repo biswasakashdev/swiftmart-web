@@ -26,7 +26,7 @@ export const AuthPage: React.FC = () => {
   const [formErr, setFormError] = useState<string | undefined>(undefined)
 
   const updateFormError = (formError: string | undefined) => {
-    setFormError(formErr)
+    setFormError(formError)
   }
 
   const updateAuthMode = (authMode: AuthMode) => {

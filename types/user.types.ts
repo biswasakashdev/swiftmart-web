@@ -4,9 +4,9 @@ export interface Authorization {
 }
 
 export interface User {
-  firstName: string
-  lastName: string
+  name: string
   email: string
+  avatar: string
 }
 
 export interface UserCredentials {

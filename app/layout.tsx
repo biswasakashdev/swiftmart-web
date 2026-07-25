@@ -7,6 +7,7 @@ import { AuthContextProvider } from "@/context/auth.context"
 import { fetchAuthorization } from "./action"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -21,15 +22,16 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const authorization = await fetchAuthorization()
-  const headersList = await headers()
+  // const headersList = await headers()
 
-  const requestPath = headersList.get("x-pathname")
+  // const requestPath = headersList.get("x-pathname")
 
-  // If user logged in then redirect to dashboard.
+  // // If user logged in then redirect to dashboard.
 
-  if (authorization && requestPath && !requestPath.startsWith("/home")) {
-    redirect("/home")
-  }
+  // if (authorization && requestPath && !requestPath.startsWith("/home")) {
+  //   redirect("/home")
+  // }
+
   return (
     <html
       lang="en"
@@ -48,9 +50,11 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthContextProvider authorization={authorization}>
-            {children}
-          </AuthContextProvider>
+          <TooltipProvider>
+            <AuthContextProvider authorization={authorization}>
+              {children}
+            </AuthContextProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
