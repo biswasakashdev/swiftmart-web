@@ -1,5 +1,4 @@
 export interface Authorization {
-  token: string
   user: User
 }
 

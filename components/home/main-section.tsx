@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { PrimaryDetails } from "./primary-details"
+import useShopContext from "@/context/workspace.context"
 
 // --- Framer Motion Animations ---
 const containerVariants: Variants = {
@@ -40,6 +41,7 @@ const cardVariants: Variants = {
 }
 
 export default function HomeMain() {
+  const { shopList } = useShopContext()
   return (
     <>
       <SidebarInset className="flex-1 overflow-x-hidden">
@@ -80,7 +82,7 @@ export default function HomeMain() {
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="px-3 py-1 font-normal">
-                  Total Stores: {mockShops.length}
+                  Total Stores: {shopList.length}
                 </Badge>
               </div>
             </div>

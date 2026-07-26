@@ -12,17 +12,14 @@ import { Label } from "@/components/ui/label"
 import { countryCallingCodes } from "@/constants/number-codes"
 import { motion, Variants } from "framer-motion"
 import { Mail, Sparkles, User } from "lucide-react"
-import React, { useActionState, useEffect, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import OptionPicker from "../option-picker"
-import { UserSchema } from "@/schemas/user.schema"
 import { AuthMode } from "@/app/auth/page"
-import axios from "axios"
-import { BASE_URL } from "@/context/user.context"
 import { CardDescription } from "../ui/card"
+import { signUp } from "@/app/auth/action"
 
 export const SignUpForm = ({
   variants,
-  updateAuthMode,
   updateFormError,
 }: {
   variants: Variants
@@ -31,69 +28,7 @@ export const SignUpForm = ({
   updateFormError: (formError: string | undefined) => void
 }) => {
   const [formState, action, isLoading] = useActionState<SignUpForm, FormData>(
-    async (_state: SignUpForm, formData: FormData) => {
-      // Handle registration logic here
-
-      const userData = {
-        phone: formData.get("phone")?.toString(),
-        countryCode: formData.get("countryCode")?.toString(),
-        email: formData.get("email")?.toString(),
-        name: formData.get("fullName")?.toString(),
-        password: formData.get("password")?.toString(),
-        confirmPassword: formData.get("confirmPassword")?.toString(),
-      }
-
-      const result = UserSchema.safeParse(userData)
-
-      const formError: SignUpFormError = {}
-
-      if (result.error) {
-        for (const iss of result.error.issues) {
-          formError[iss.path[0] as keyof SignUpFormError] = iss.message
-        }
-
-        return {
-          state: {
-            ...userData,
-          },
-          errors: formError,
-        } as SignUpForm
-      }
-
-      const userDetails = result.data
-
-      const res = await axios.post(
-        `${BASE_URL}/api/v1/auth/register`,
-        {
-          email: userDetails.email,
-          password: userDetails.password,
-          name: userDetails.name,
-          phone: userDetails.phone,
-          countryCode: userDetails.countryCode,
-        },
-        {
-          validateStatus: () => true,
-        }
-      )
-
-      const { status, data } = res
-
-      if (status === 201) {
-        updateAuthMode("signin")
-        return { state: {}, errors: {} } as SignUpForm
-      }
-
-      const serverError: SignUpFormError = {
-        err: data.error || "Something went wrong.",
-      }
-
-      return {
-        state: {
-          ...userData,
-        },
-        errors: serverError,
-      } as SignUpForm
-    },
+    signUp,
     { state: {}, errors: {} }
   )
 

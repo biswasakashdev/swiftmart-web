@@ -49,18 +49,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 import HomeMain from "@/components/home/main-section"
-
-// --- Mock Data ---
-export interface Shop {
-  id: string
-  name: string
-  domain: string
-  role: "Owner" | "Admin" | "Member"
-  status: "Active" | "Maintenance" | "Draft"
-  revenue: string
-  ordersCount: number
-  productsCount: number
-}
+import { Shop } from "@/types/shop.types"
 
 const mockShops: Shop[] = [
   //   {

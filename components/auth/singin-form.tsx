@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import PasswordInputWithToggle from "@/components/password-toggle-input"
 import { AuthMode } from "@/app/auth/page"
-import { signin } from "@/app/auth/action"
+import { signIn } from "@/app/auth/action"
 import { Field, FieldError } from "@/components/ui/field"
 
 export const SignInForm = ({
@@ -18,7 +18,7 @@ export const SignInForm = ({
   updateFormError: (formError: string | undefined) => void
 }) => {
   const [state, action, isLoading] = useActionState<SignInForm, FormData>(
-    signin,
+    signIn,
     {
       state: {},
       errors: {},

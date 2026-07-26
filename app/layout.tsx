@@ -22,15 +22,17 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const authorization = await fetchAuthorization()
-  // const headersList = await headers()
+  const headersList = await headers()
 
-  // const requestPath = headersList.get("x-pathname")
+  const requestPath = headersList.get("x-pathname")
 
-  // // If user logged in then redirect to dashboard.
-
-  // if (authorization && requestPath && !requestPath.startsWith("/home")) {
-  //   redirect("/home")
-  // }
+  if (authorization && requestPath && !requestPath.startsWith("/home")) {
+    // If user logged in then redirect to dashboard.
+    redirect("/home")
+  } else if (!authorization && requestPath && requestPath.startsWith("/home")) {
+    // If user not authenticated and tried to access secured endpoint.
+    redirect("/auth", "replace")
+  }
 
   return (
     <html
