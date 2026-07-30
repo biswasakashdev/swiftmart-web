@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import useUserContext from "@/context/user.context"
+
 import {
   Bell,
   ChevronsUpDown,
@@ -35,11 +35,14 @@ import {
   Settings,
 } from "lucide-react"
 import { SwiftmartLogo } from "../swiftmart-logo"
+import useAuthContext from "@/context/auth.context"
 
 export default function HomeSidebar() {
-  const { authorization } = useUserContext()
+  const { user } = useAuthContext()
 
-  const { user } = authorization
+  const [firstName, lastName] = user.name.split(" ")
+
+  const initials = firstName[0] + lastName[0]
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -113,7 +116,9 @@ export default function HomeSidebar() {
                 >
                   <Avatar className="size-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">AM</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
+                      {initials}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{user.name}</span>
@@ -134,7 +139,9 @@ export default function HomeSidebar() {
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="size-8 rounded-lg">
                       <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="rounded-lg">AM</AvatarFallback>
+                      <AvatarFallback className="rounded-lg">
+                        {initials}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">

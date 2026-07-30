@@ -2,12 +2,18 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 
 import { Button } from "@/components/ui/button"
-import { ArrowUpRight, ExternalLink, Plus, Search, Store } from "lucide-react"
+import {
+  ArrowUpRight,
+  ExternalLink,
+  MoreVertical,
+  Plus,
+  Search,
+  Store,
+} from "lucide-react"
 
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Variants } from "framer-motion"
-import { motion } from "framer-motion"
+import { Input } from "@/components/ui/input"
+import { motion, Variants } from "framer-motion"
 
 import {
   Card,
@@ -17,8 +23,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Shop } from "@/types/shop.types"
+import { useEffect, useState } from "react"
 import { PrimaryDetails } from "./primary-details"
-import useShopContext from "@/context/workspace.context"
 
 // --- Framer Motion Animations ---
 const containerVariants: Variants = {
@@ -41,7 +56,13 @@ const cardVariants: Variants = {
 }
 
 export default function HomeMain() {
-  const { shopList } = useShopContext()
+  const [shopList, setShopList] = useState<Shop[]>([])
+  const [searchQuery, setSearchQuery] = useState("")
+
+  useEffect(() => {
+    const fetchShopList = () => {}
+  }, [searchQuery])
+
   return (
     <>
       <SidebarInset className="flex-1 overflow-x-hidden">
@@ -94,7 +115,7 @@ export default function HomeMain() {
               animate="visible"
               className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
             >
-              {filteredShops.map((shop) => (
+              {shopList.map((shop) => (
                 <motion.div key={shop.id} variants={cardVariants}>
                   <Card className="flex h-full flex-col justify-between transition-all hover:border-muted-foreground/30 hover:shadow-sm">
                     <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
@@ -203,14 +224,14 @@ export default function HomeMain() {
             </motion.div>
 
             {/* Empty State */}
-            {filteredShops.length === 0 && (
-              <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+            {shopList.length === 0 && (
+              <div className="flex min-h-75 flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
                 <div className="flex size-12 items-center justify-center rounded-full bg-muted">
                   <Store className="size-6 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-sm font-semibold">No stores found</h3>
 
-                {searc}
+                {searchQuery}
                 <p className="mt-1 text-xs text-muted-foreground">
                   No matching stores were found for &quot;{searchQuery}
                   &ldquo;.

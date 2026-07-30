@@ -48,8 +48,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
-import HomeMain from "@/components/home/main-section"
+import HomeMain from "@/components/home/home-main-section"
 import { Shop } from "@/types/shop.types"
+import HomeSidebar from "@/components/home/home-sidebar"
 
 const mockShops: Shop[] = [
   //   {
@@ -100,21 +101,12 @@ const currentUser = {
   avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
 }
 
-export default function DashboardPage() {
-  const [selectedShop, setSelectedShop] = React.useState<Shop>(mockShops[0])
-  const [searchQuery, setSearchQuery] = React.useState("")
-
-  const filteredShops = mockShops.filter(
-    (shop) =>
-      shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      shop.domain.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
+export default function HomePage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         {/* Collapsible Sidebar */}
-
+        <HomeSidebar />
         {/* Main Content Area */}
         <HomeMain />
       </div>

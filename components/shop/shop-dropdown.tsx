@@ -13,7 +13,7 @@ import {
 import { SidebarMenuButton } from "../ui/sidebar"
 import { CheckCircle2, ChevronsUpDown, Plus, Store } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { Shop } from "@/app/home/page"
+import { Shop } from "@/types/shop.types"
 
 export default function ShopDropDown({
   selectedShopId,

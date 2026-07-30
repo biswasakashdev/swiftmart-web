@@ -1,18 +1,9 @@
-import { WorkspaceContextProvider } from "@/context/workspace.context"
-import { fetchShops } from "./action"
-import { Suspense } from "react"
+import { AuthContextProvider } from "@/context/auth.context"
 
 export default async function HomeLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const shopsPromise = fetchShops()
-  return (
-    <Suspense>
-      <WorkspaceContextProvider shopListPromise={shopsPromise}>
-        {children}
-      </WorkspaceContextProvider>
-    </Suspense>
-  )
+  return <AuthContextProvider>{children}</AuthContextProvider>
 }

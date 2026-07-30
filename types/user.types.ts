@@ -1,5 +1,8 @@
+import { AxiosInstance } from "axios"
+
 export interface Authorization {
   user: User
+  token: string
 }
 
 export interface User {
