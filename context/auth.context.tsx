@@ -2,11 +2,7 @@
 
 import { Authorization, User } from "@/types/user.types"
 import axios, { AxiosInstance } from "axios"
-import { useRouter } from "next/navigation"
 import { createContext, useContext, useEffect, useState } from "react"
-
-export const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:9000"
 
 const AuthContext = createContext<{
   user: User
@@ -27,8 +23,6 @@ export const AuthContextProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const router = useRouter()
-
   const [authorization, setAuthorization] = useState<Authorization | undefined>(
     undefined
   )

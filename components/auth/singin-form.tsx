@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import PasswordInputWithToggle from "@/components/password-toggle-input"
 import { AuthMode } from "@/app/auth/page"
-import { signIn } from "@/app/auth/action"
 import { Field, FieldError } from "@/components/ui/field"
+import { UserCredentialSchema } from "@/schemas/user.schema"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 
 export const SignInForm = ({
   variants,
@@ -17,8 +19,60 @@ export const SignInForm = ({
   updateAuthMode: (authMode: AuthMode) => void
   updateFormError: (formError: string | undefined) => void
 }) => {
+  const router = useRouter()
+
   const [state, action, isLoading] = useActionState<SignInForm, FormData>(
-    signIn,
+    async (_prevState: SignInForm, formData: FormData) => {
+      const formFields = {
+        email: formData.get("email")?.toString() || "",
+        password: formData.get("password")?.toString() || "",
+      }
+
+      const result = UserCredentialSchema.safeParse(formFields)
+      const rememberMe = formData.get("rememberMe") ? true : false
+
+      if (result.error) {
+        const formError: SignInFormError = {}
+        for (const iss of result.error.issues) {
+          formError[iss.path[0] as keyof SignInFormError] = iss.message
+        }
+        return {
+          state: {
+            email: formFields.email,
+          },
+          errors: formError,
+        }
+      }
+
+      const res = await axios.post(`/api/v1/auth`, result.data, {
+        params: {
+          rememberMe,
+        },
+        validateStatus: () => true,
+      })
+
+      const { data, status } = res
+
+      if (status !== 201) {
+        const err: SignInFormError = {
+          err: data.error || "Something went wrong.",
+        }
+        return {
+          state: {
+            ...formFields,
+            rememberMe,
+          },
+          errors: err,
+        }
+      }
+
+      router.replace("/home")
+
+      return {
+        state: {},
+        errors: {},
+      }
+    },
     {
       state: {},
       errors: {},

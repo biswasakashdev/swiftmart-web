@@ -12,7 +12,6 @@ import {
 } from "radix-ui/dropdown-menu"
 import { SidebarMenuButton } from "../ui/sidebar"
 import { CheckCircle2, ChevronsUpDown, Plus, Store } from "lucide-react"
-import { usePathname } from "next/navigation"
 import { Shop } from "@/types/shop.types"
 
 export default function ShopDropDown({
@@ -26,8 +25,6 @@ export default function ShopDropDown({
   selectedShopRole: string
   shopList: Shop[]
 }) {
-  const pathName = usePathname()
-
   const changeShopHandle = (shopId: string) => []
 
   return (

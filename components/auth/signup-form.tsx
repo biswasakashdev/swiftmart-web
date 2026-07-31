@@ -1,3 +1,5 @@
+"use client"
+
 import PasswordInputWithToggle from "@/components/password-toggle-input"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,11 +18,13 @@ import { useActionState, useEffect, useState } from "react"
 import OptionPicker from "../option-picker"
 import { AuthMode } from "@/app/auth/page"
 import { CardDescription } from "../ui/card"
-import { signUp } from "@/app/auth/action"
+import { UserSchema } from "@/schemas/user.schema"
+import axios from "axios"
 
 export const SignUpForm = ({
   variants,
   updateFormError,
+  updateAuthMode,
 }: {
   variants: Variants
   updateAuthMode: (authMode: AuthMode) => void
@@ -28,7 +32,71 @@ export const SignUpForm = ({
   updateFormError: (formError: string | undefined) => void
 }) => {
   const [formState, action, isLoading] = useActionState<SignUpForm, FormData>(
-    signUp,
+    async (_state: SignUpForm, formData: FormData) => {
+      const userData = {
+        phone: formData.get("phone")?.toString(),
+        countryCode: formData.get("countryCode")?.toString(),
+        email: formData.get("email")?.toString(),
+        name: formData.get("fullName")?.toString(),
+        password: formData.get("password")?.toString(),
+        confirmPassword: formData.get("confirmPassword")?.toString(),
+      }
+
+      const result = UserSchema.safeParse(userData)
+
+      const formError: SignUpFormError = {}
+
+      if (result.error) {
+        for (const iss of result.error.issues) {
+          formError[iss.path[0] as keyof SignUpFormError] = iss.message
+        }
+
+        return {
+          state: {
+            ...userData,
+          },
+          errors: formError,
+        } as SignUpForm
+      }
+
+      const userDetails = result.data
+
+      const res = await axios.post(
+        `/api/v1/auth/register`,
+        {
+          email: userDetails.email,
+          password: userDetails.password,
+          name: userDetails.name,
+          phone: userDetails.phone,
+          countryCode: userDetails.countryCode,
+        },
+        {
+          validateStatus: () => true,
+        }
+      )
+
+      const { status, data } = res
+
+      if (status === 201) {
+        updateAuthMode("signin")
+        return {
+          state: {},
+          errors: {},
+        }
+      }
+
+      const serverError: SignUpFormError = {
+        err: data.error || "Something went wrong.",
+      }
+
+      return {
+        state: {
+          ...userData,
+        },
+        errors: serverError,
+      } as SignUpForm
+    },
+
     { state: {}, errors: {} }
   )
 

@@ -49,7 +49,7 @@ export const AuthPage: React.FC = () => {
             </CardTitle>
             <CardDescription className="text-xs">
               {formErr ? (
-                <span>{formErr}</span>
+                <span className="font-semibold text-red-600">{formErr}</span>
               ) : (
                 <span>
                   {authMode === "signin"
